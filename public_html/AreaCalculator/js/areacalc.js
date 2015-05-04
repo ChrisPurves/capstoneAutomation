@@ -7,6 +7,9 @@
 $(document).ready(function () {
 	// listener for coordinate type change
 	$("#coordType").change(coordTypeHandler);
+        
+        // listener for line type change
+        $("#lineType").change(lineTypeHandler);
 
 	// listener for add line
 	$("#addLine").click(addLineHandler);
@@ -55,7 +58,7 @@ function addLineHandler(e) {
 	if (cType === "ca") { // cartesian absolute
 		var x = $("#c1").val().trim();
 		var y = $("#c2").val().trim() * -1;
-		if ($("#addRadius").prop("checked")) { // add arc
+		if ($("#lineType").val() === "arc") { // add arc
 			var radius = $("#radius").val();
 			var rot = 0;
 			if ($("#reverseArc").prop("checked")) { // reverse arc
@@ -93,7 +96,7 @@ function addLineHandler(e) {
 			}
 		}
 		// append to d for non absolute types
-		if ($("#addRadius").prop("checked")) { // add arc
+		if ($("#lineType").val() === "arc") { // add arc
 			var radius = $("#radius").val();
 			var rot = 0;
 			if ($("#reverseArc").prop("checked")) { // reverse arc
@@ -106,6 +109,8 @@ function addLineHandler(e) {
 	}
 	// append to path
 	$("#path > path").attr("d", d);
+        // resize drawing
+        calcViewBox();
 	// focus in length
 	$("#c1").focus().select();
 }
@@ -200,9 +205,53 @@ function calcAreaHandler(e) {
 	alert(area);
 }
 
+function calcViewBox() {
+	var path = $("#path > path")[0];
+	var totLength = path.getTotalLength();
+	var points = 1000;
+	var step = totLength / points;
+	var length = 0;
+        var minX = 0;
+        var maxX = 0;
+        var minY = 0;
+        var maxY = 0;
+	// find min/max values
+	for (i = 0; i <= points; i++) {
+		var p = path.getPointAtLength(length);
+                if (p.x > maxX) {
+                    maxX = p.x;
+                } else if (p.x < minX) {
+                    minX = p.x;
+                }
+                if (p.y > maxY) {
+                    maxY = p.y;
+                } else if (p.y < minY) {
+                    minY = p.y;
+                }
+		length = length + step;
+	}
+        // calculate viewbox values
+        var vbWidth = maxX - minX;
+        if (vbWidth < 1) {vbWidth = 1;}
+        var vbHeight = maxY - minY;
+        if (vbHeight < 1) {vbHeight = 1;}
+        var vbX = (minX + maxX) / 2;
+        var vbY = (minY + maxY) / 2;
+        var vbString = vbX.toString() + " " + vbY.toString() + " " + vbWidth.toString() + " " + vbHeight.toString();
+        $("#path")[0].setAttribute("viewBox", vbString);
+    }
+
 function removeLastHandler(e) {
 	e.preventDefault();
 	var d = $("#path > path").attr("d");
 	d = d.replace(/[lLaAzZ][ .\-0-9e]*$/, "");
 	$("#path > path").attr("d", d);
+}
+
+function lineTypeHandler(e) {
+    if ($(this).val() === "line") {
+        $("div.arc").hide();
+    } else { // arc
+        $("div.arc").show();
+    }
 }
