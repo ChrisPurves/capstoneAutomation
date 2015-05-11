@@ -1,16 +1,40 @@
 /*
 Copyright 2014 Capstone Automation All Rights Reserved
 */
-
-html, body {
-	height: 100%;
-	padding: 0;
-	margin: 0;
-	border: none;
-	overflow: hidden;
+html,
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  overflow: hidden;
 }
-
-iframe {
-	height: 100%;
-	width: 100%;
+svg#logo {
+  position: absolute;
+  height: 4em;
+  top: 1em;
+  left: 1em;
 }
+svg#gear {
+  position: absolute;
+  height: 25%;
+  top: 25%;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+p#contact {
+  font-family: Arial, Helvetica, sans-serif;
+  position: absolute;
+  text-align: center;
+  top: 55%;
+  width: 100%;
+}
+p#contact > a {
+  color: #1423a4;
+}
+p#contact > a:hover {
+  color: #f7941d;
+}
+/*# sourceMappingURL=styles.css.map */
